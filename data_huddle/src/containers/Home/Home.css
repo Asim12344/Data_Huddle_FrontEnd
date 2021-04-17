@@ -1,0 +1,172 @@
+.heading{
+    /* font-family: Open Sans; */
+    font-style: normal;
+    font-size: 40px;
+    line-height: 120%;
+    color: #2A407C;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+.paragraph{
+    /* font-family: Merriweather Sans; */
+    font-style: normal;
+    /* font-weight: bold; */
+    font-size: 18px;
+    line-height: 150%;
+    color: #8794BA
+}
+
+.m-t-110{
+    margin-top: 110px;
+}
+
+.pink-button{
+    background-color: #EF2A89;
+    color: white;
+    width: 238px;
+    height: 50px;
+    border-radius: 68px;
+    margin-top: 25px;
+    border: none;
+}
+
+.color{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 36px;
+    line-height: 49px;
+    color: #172755;
+}
+
+.center{
+    text-align: center;
+}
+
+.div-styling{
+    background: #F5F5F5;
+    margin-top: 100px;
+    transform-style: preserve-3d;
+    /* margin-bottom: 100px; */
+}
+
+.margin-bottom-100{
+    margin-bottom: 100px
+}
+
+.height-700{
+    height: 700px;
+}
+
+.height-500{
+    height: 576px;
+}
+
+.m-t-20{
+    position: relative;
+    top: 37px;
+}
+
+.block{
+    display: inline-block; 
+    /* width: 33%; */
+}
+
+.margin{
+    margin-left: 18%;
+    margin-right: 18%;
+    margin-top: 9%;
+}
+
+.center1{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    /* width: 50%; */
+}
+
+.margin-top-20{
+    margin-top: 20px;
+}
+
+.under {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: -1;
+}
+  
+.middle {
+    position: absolute;
+    left: 42px;
+    top: 55px;
+    z-index: -1;
+}
+
+.over{
+    position: absolute;
+    left: 107px;
+    top: 96px;
+    z-index: -1;
+}
+
+.m-t-180{
+  margin-top: 180px;
+}
+
+.m-t-125{
+    margin-top: 125px;
+}
+
+.w-61{
+    width: 61%;
+}
+
+.m-t-61{
+    margin-top: 61px;
+}
+
+.data-image{
+    margin-top: 61px;
+    width: 70%;
+    margin-left: 16px;
+    /* z-index: -1; */
+}
+.polygon-image{
+    position: absolute;
+    margin-top: 156px;
+    width: 27%;
+    /* z-index: -1; */
+}
+
+.over-blue{
+    position: absolute;
+    left: 68%;
+    top: 46%;
+    /* z-index: -1; */
+}
+.styling{
+    margin: 44px 326px;
+    font-size: 22px;
+}
+
+.margin-bottom-80{
+    margin-bottom: 80px;
+}
+
+.m-t-100{
+    margin-top: 100px;
+}
+
+.p-styling a{
+    color: #8794BA;
+    font-size: 17px;
+    padding: 7px 13px;
+    border-radius: 3px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+}
+

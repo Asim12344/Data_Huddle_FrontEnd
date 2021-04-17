@@ -17,7 +17,9 @@ class Detail extends Component {
         iframe: ""
     }
     componentDidMount(){
-        let iframe = "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_229e6&amp;symbol=" + this.props.match.params['ticker']+ "&amp;interval=30&amp;hidesidetoolbar=1&amp;symboledit=1&amp;saveimage=1&amp;toolbarbg=F1F3F6&amp;studies=%5B%5D&amp;hideideas=1&amp;theme=Dark&amp;style=2&amp;timezone=Etc%2FUTC&amp;studies_overrides=%7B%7D&amp;overrides=%7B%7D&amp;enabled_features=%5B%5D&amp;disabled_features=%5B%5D&amp;locale=en&amp;utm_source=www.memebergterminal.com&amp;utm_medium=widget&amp;utm_campaign=chart&amp;utm_term=" + this.props.match.params['ticker']
+        console.log(this.props.match.params['ticker'])
+        let iframe= "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_ae9d9&symbol="+this.props.match.params['ticker']+"&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=F1F3F6&studies=%5B%5D&hideideas=1&theme=Dark&style=2&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.memebergterminal.com&utm_medium=widget&utm_campaign=chart&utm_term=" + this.props.match.params['ticker']
+        // let iframe = "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_229e6&amp;symbol=" + this.props.match.params['ticker']+ "&amp;interval=30&amp;hidesidetoolbar=1&amp;symboledit=1&amp;saveimage=1&amp;toolbarbg=F1F3F6&amp;studies=%5B%5D&amp;hideideas=1&amp;theme=Dark&amp;style=2&amp;timezone=Etc%2FUTC&amp;studies_overrides=%7B%7D&amp;overrides=%7B%7D&amp;enabled_features=%5B%5D&amp;disabled_features=%5B%5D&amp;locale=en&amp;utm_source=www.memebergterminal.com&amp;utm_medium=widget&amp;utm_campaign=chart&amp;utm_term=" + this.props.match.params['ticker']
         this.setState({iframe: iframe})
         axios.get('api/data/getData', {
             params: {

@@ -1,32 +1,56 @@
 nav{
-    background-color: #007bff;
-      height: 80px;
-      width: 100%;
-    }
-    label.logo{
-      color: white;
-      font-size: 35px;
-      line-height: 80px;
-      padding: 0 100px 0 120px;
-      font-weight: bold;
-    }
-    nav ul{
-      float: right;
-      margin-right: 20px;
-    }
-    nav ul li{
-      display: inline-block;
-      line-height: 80px;
-      margin: 0 5px;
-    }
-    nav ul li a{
-      color: white;
-      font-size: 17px;
-      padding: 7px 13px;
-      border-radius: 3px;
-      text-transform: uppercase;
-    }
-    a.active,a:hover{
-      background: #1b9bff;
-      transition: .5s;
-    }
+  /* background-color: #007bff; */
+  height: 80px;
+  width: 100%;
+}
+
+
+/* label.logo{
+  color: white;
+  font-size: 35px;
+  line-height: 80px;
+  padding: 0 100px 0 120px;
+  font-weight: bold;
+} */
+
+.logo{
+  padding-left: 90px;
+}
+
+nav ul li a{
+  color: #8794BA;
+  font-size: 17px;
+  padding: 7px 13px;
+  border-radius: 3px;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  /* text-transform: uppercase; */
+}
+.margin-top-24{
+  margin-top: 24px;
+}
+nav ul li{
+  display: inline-block;
+  line-height: 80px;
+  margin: 0 5px;
+}
+/* nav ul li a{
+  color: white;
+  font-size: 17px;
+  padding: 7px 13px;
+  border-radius: 3px;
+  text-transform: uppercase;
+} */
+/* a.active,a:hover{
+  background: #1b9bff;
+  transition: .5s;
+} */
+
+
+.img-style{
+  height: 70%;
+  width: 102%;
+  /* z-index: 1; */
+
+}
