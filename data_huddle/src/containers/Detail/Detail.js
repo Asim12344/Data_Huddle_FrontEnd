@@ -14,56 +14,95 @@ class Detail extends Component {
         mentions: [],
         dates: [],
         showChart: false,
-        iframe: ""
+        iframe: "",
+        date: ""
     }
-    componentDidMount(){
+    async componentDidMount(){
         console.log(this.props.match.params['ticker'])
         let iframe= "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_ae9d9&symbol="+this.props.match.params['ticker']+"&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=F1F3F6&studies=%5B%5D&hideideas=1&theme=Dark&style=2&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.memebergterminal.com&utm_medium=widget&utm_campaign=chart&utm_term=" + this.props.match.params['ticker']
         // let iframe = "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_229e6&amp;symbol=" + this.props.match.params['ticker']+ "&amp;interval=30&amp;hidesidetoolbar=1&amp;symboledit=1&amp;saveimage=1&amp;toolbarbg=F1F3F6&amp;studies=%5B%5D&amp;hideideas=1&amp;theme=Dark&amp;style=2&amp;timezone=Etc%2FUTC&amp;studies_overrides=%7B%7D&amp;overrides=%7B%7D&amp;enabled_features=%5B%5D&amp;disabled_features=%5B%5D&amp;locale=en&amp;utm_source=www.memebergterminal.com&amp;utm_medium=widget&amp;utm_campaign=chart&amp;utm_term=" + this.props.match.params['ticker']
         this.setState({iframe: iframe})
-        axios.get('api/data/getData', {
-            params: {
-                companyName:this.props.match.params['name'],
-            }
-        })
-        .then(res => {
-           var today_data = res['data']['today_data']
-           this.setState({detail: today_data , loader:false})
-           this.getChartData()
-        })
-        .catch(err => {
-            console.log("error = " , err)
-        })  
+        const response = await fetch('https://api.pushshift.io/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=24h')
+        const today_data = await response.json();
+        this.setState({detail: today_data['data'] , loader:false})
+        this.getChartData()
+        // axios.get('api/data/getData', {
+        //     params: {
+        //         companyName:this.props.match.params['name'],
+        //     }
+        // })
+        // .then(res => {
+        //    var today_data = res['data']['today_data']
+        //    this.setState({detail: today_data , loader:false})
+        //    this.getChartData()
+        // })
+        // .catch(err => {
+        //     console.log("error = " , err)
+        // })  
 
     }
 
-    getChartData(){
+    async getChartData(){
         // Ajax calls here
-        axios.get('api/data/getPrevData', {
-            params: {
-                companyName:this.props.match.params['name'],
+        const response2 = await fetch('https://memeberg-terminal.uc.r.appspot.com/graph?ticker='+this.props.match.params['ticker'])
+        const graph_data = await response2.json();
+        console.log("graph_data = " ,graph_data)
+        let y_axis = []
+        let x_axis = []
+        for(let i = 0 ; i < graph_data.length ; i++){
+            y_axis.push(graph_data[i]['y'])
+            x_axis.push(new Date(graph_data[i]['x']))
+            if (i == graph_data.length-1){
+                var date = (new Date(graph_data[i]['x']).toString())
+                console.log("date ===== " ,date)
+                this.setState({date: date})
             }
-        })
-        .then(res => {
-           this.setState({
-            chartData:{
-              labels:res['data']['dates'],
-              datasets:[
-                {
-                  label:'Mentions over time',
-                  data:res['data']['mentions'],
-                  backgroundColor:[
-                    'rgba(0,123,255,1)',
+        }
+        console.log("x_axis = " ,x_axis)
+        console.log("y_axis = " ,y_axis)
+        this.setState({
+                chartData:{
+                  labels:x_axis,
+                  datasets:[
+                    {
+                      label: 'y',
+                      data:y_axis,
+                      borderColor: 'rgba(255,0,0)',
+                      pointBorderColor: 'rgba(0,0,0)',
+                    //   pointBackgroundColor: '#000',
+                      backgroundColor:[
+                        'rgba(255,255,255)',
+                      ]
+                    }
                   ]
-                }
-              ]
-            },
-            showChart: true
-          });
-        })
-        .catch(err => {
-            console.log("error = " , err)
-        })  
+                },
+                showChart: true
+              });
+        // axios.get('api/data/getPrevData', {
+        //     params: {
+        //         companyName:this.props.match.params['name'],
+        //     }
+        // })
+        // .then(res => {
+        //    this.setState({
+        //     chartData:{
+        //       labels:res['data']['dates'],
+        //       datasets:[
+        //         {
+        //           label:'Mentions over time',
+        //           data:res['data']['mentions'],
+        //           backgroundColor:[
+        //             'rgba(0,123,255,1)',
+        //           ]
+        //         }
+        //       ]
+        //     },
+        //     showChart: true
+        //   });
+        // })
+        // .catch(err => {
+        //     console.log("error = " , err)
+        // })  
         
       }
     openUrl = (link) => {
@@ -76,21 +115,37 @@ class Detail extends Component {
             <div className="container m-t-50">
                 <div className="row">
                     <div className="col-md-4">
+                        <div className="">
+                            <h5 style={{marginBottom:'32px'}}>Stock Price</h5>
+                        </div>
                         <iframe id="tradingview_229e6" src={this.state.iframe}  style={{width: "100%" ,height: "100%", margin: 0 , padding: 0 }} allowtransparency="true" scrolling="no" allowFullScreen=""></iframe>
                     </div>
                     <div className="col-md-8">
                         {this.state.showChart && (
                         <div className="" >
-                            <div className="center">
-                            <h1 style={{marginBottom:'4px'}}>Graph</h1>
+                            <div className="">
+                                <h5 style={{marginBottom:'31px'}}>Mentions over time</h5>
                             </div>
                             <Line
                                 data={this.state.chartData}
                                 options={{
                                     responsive: true,
                                     maintainAspectRatio: true,
+                                    legend: {
+                                        display: false
+                                    },
+                                    scales: {
+                                        xAxes: [{
+                                            display: false //this will remove all the x-axis grid lines
+                                        }]
+                                    }
+                            
+
                                 }}
                             />
+                            <div className="center">
+                                <p style={{marginBottom:'31px'}}>{this.state.date}</p>
+                            </div>
                         </div>
                         )}
                         {!this.state.showChart && (

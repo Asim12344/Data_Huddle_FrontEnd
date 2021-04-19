@@ -6,7 +6,7 @@ import axios from '../../axios';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/index';
 import Alert from '../../components/Alert'
-
+// import axios from 'axios';
 class Data extends Component {
 
     state = {
@@ -14,6 +14,7 @@ class Data extends Component {
         tickerName: "",
         stockRecords:[],
         loader: false,
+        
     }
 
     componentDidMount(){
@@ -64,6 +65,34 @@ class Data extends Component {
         
     }
 
+    dummy = async () => {
+        var check = false
+        for(let i = 0 ; i < stockData.length ; i++){
+            if(stockData[i].company.toLowerCase().trim() == this.state.companyName.toLowerCase().trim()){
+                check = true
+                this.setState({ tickerName: stockData[i].ticker });
+            }
+        }
+        if (check == true){
+            this.setState({loader: true})
+            const response = await fetch('https://api.pushshift.io/reddit/comment/search/?q='+this.state.companyName +'&after=24h')
+            const today_data = await response.json();
+            console.log("res = " ,today_data['data'])
+
+            const response1 = await fetch('https://api.pushshift.io/reddit/comment/search/?q='+this.state.companyName +'&after=48h&before=24h')
+            const yesterday_data = await response1.json();
+            console.log("res = " ,yesterday_data['data'])
+            this.data(today_data['data'],yesterday_data['data'])
+            this.setState({loader: false , companyName: ""})
+            
+        }
+        else{
+            this.props.showAlert("Does not exist in list","danger")
+            this.props.hideAlert()
+            this.setState({loader: false , companyName: ""})
+        }
+    }
+
     apicall = () => {
         var check = false
         for(let i = 0 ; i < stockData.length ; i++){
@@ -82,6 +111,7 @@ class Data extends Component {
             .then(res => {
                var today_data = res['data']['today_data']
                var yesterday_data = res['data']['yesterday_data']
+               console.log(res['data'])
                this.data(today_data,yesterday_data)
                this.setState({loader: false , companyName: ""})
             })
@@ -109,7 +139,7 @@ class Data extends Component {
                     <input type="text"  className="form-control height-45" value={this.state.companyName} onChange={this.handlekey} placeholder="Enter a company name" />
                 </div>
                 <div className="col-md-1">
-                    <button disabled={this.state.companyName == "" ? true : false} onClick={this.apicall} className="btn btn-primary height-45">Submit</button>                        
+                    <button disabled={this.state.companyName == "" ? true : false} onClick={this.dummy} className="btn btn-primary height-45">Submit</button>                        
                 </div>
                 {this.state.loader && (
                     <div className="col-md-3">

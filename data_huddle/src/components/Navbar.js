@@ -32,11 +32,11 @@ const navbar = (props) => {
 
                 </div>
                 {(url[1] != 'data' && url[1] != 'detail') && (
-                    <div className="col-md-5" style={{height:'50%'}}>
+                    <div className="temp col-md-5" style={{height:'50%'}}>
                         {/* <li><NavLink exact to='/home'>Sign In</NavLink></li> */}
                         <img  className="img-style" src={rect} />
-                        
-
+                        <div className="top-left">Sign in</div>
+                        <div className="far-top-left">Sign Up</div>
                     </div>
                 )}
             </div>

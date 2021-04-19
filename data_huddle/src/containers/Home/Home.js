@@ -2,11 +2,6 @@ import React, { Component ,Fragment} from 'react';
 import { NavLink } from 'react-router-dom';
 
 import './Home.css';
-import clock from "../../assets/pics/clock.png"
-import clock2 from "../../assets/pics/clock2.png"
-import Group from "../../assets/pics/Group.png"
-import Screen from "../../assets/pics/screen.png"
-import location from "../../assets/pics/location.png"
 import Blue from "../../assets/pics/blue.png"
 import White from "../../assets/pics/white.png"
 import Graph from "../../assets/pics/522.png"
@@ -22,6 +17,13 @@ import Yahoo from "../../assets/pics/Yahoo.png"
 import Alpha from "../../assets/pics/aplha.png"
 import Footer from "../../assets/pics/footer.png"
 import logo from "../../assets/pics/logo.png"
+import mainscreen from "../../assets/pics/main-screen.png"
+import planning from "../../assets/pics/planning.svg"
+import rocket from "../../assets/pics/rocket.svg"
+import meter from "../../assets/pics/meter.svg"
+import desktop from "../../assets/pics/desktop.svg"
+import graph from "../../assets/pics/graph.svg"
+
 
 
 class Home extends Component {
@@ -39,42 +41,40 @@ class Home extends Component {
             <Fragment>
             <div className="container m-t-110">
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-5">
                         <h1 className="heading bold"> Distill and Understand finance related community discussions on the web</h1>
                         <p className="paragraph"> <span style={{fontWeight:'bold'}}>DataHuddle</span> uses sophisticated data science and artificial intelligence to analyze the public conversations around financial information on the web.</p>
                         <button className="pink-button" onClick={this.data}>Try for free</button>
                     </div>
-                    {/* <div className="col-md-6">
-                        <h1 className="heading"> Distill and Understand finance related community discussions on the web</h1>
-                        <p className="paragraph"> <span style={{fontWeight:'bold'}}>DataHuddle</span> uses sophisticated data science and artificial intelligence to analyze the public conversations around financial information on the web.</p>
-                        <button className="pink-button">Try for free</button>
-                    </div> */}
+                    <div className="col-md-7">
+                    <img className="" src={mainscreen}/>
+                    </div>
                 </div>
                 <div className="div-styling height-700 margin-bottom-100">
                     <h4 className="color m-t-20 center">The Data Huddle Advantage</h4>
                     <p className="paragraph center m-t-20"> Act faster with real time information</p>
                     <div className="row m-t-20 margin">
                         <div className="col-md-4">
-                            <img className="center1" src={clock2}/>
-                            <p className="margin-top-20"> Gain the earliest indicators of high-impact events and emerging risks</p>
+                            <img className="center1" src={planning}/>
+                            <p className="center margin-top-20" style={{fontWeight:'500'}}> Gain the earliest indicators of high-impact events and emerging risks</p>
                         </div>
                         <div className="col-md-4">
-                            <img className="center1" src={clock2}/>
-                            <p className="margin-top-20">Cover the globe or specific locations</p>
+                            <img className="center1" src={rocket}/>
+                            <p className="center margin-top-20" style={{fontWeight:'500'}}>Cover the globe or specific locations</p>
                         </div>
                         <div className="col-md-4">
-                            <img className="center1" src={clock2}/>
-                            <p className="margin-top-20">Mobilize and respond with confidence and speed</p>
+                            <img className="center1" src={meter}/>
+                            <p className="center margin-top-20" style={{fontWeight:'500'}}>Mobilize and respond with confidence and speed</p>
                         </div>
                         <div className="col-md-2">
                         </div>
                         <div className="col-md-4 m-t-20 ">
-                            <img className="center1" src={Screen}/>
-                            <p className="margin-top-20">Stay on top of industry and competitive developments</p>
+                            <img className="center1" src={desktop} />
+                            <p className="center margin-top-20" style={{fontWeight:'500'}}>Stay on top of industry and competitive developments</p>
                         </div>
                         <div className="col-md-4 m-t-20">
-                            <img className="center1" src={Group}/>
-                            <p className="margin-top-20">Realtime analytics for online community forums</p>
+                            <img className="center1" src={graph}/>
+                            <p className="center margin-top-20" style={{fontWeight:'500'}}>Realtime analytics for online community forums</p>
                         </div>
                     </div>
                 </div>

@@ -54,3 +54,22 @@ nav ul li{
   /* z-index: 1; */
 
 }
+
+.temp {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+/* Bottom left text */
+.top-left {
+  position: absolute;
+  top: 53px;
+  left: 232px;
+}
+
+.far-top-left{
+  position: absolute;
+  top: 53px;
+  left: 322px;
+}
