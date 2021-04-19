@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import './Detail.css';
 import Loader from "react-loader-spinner";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
-// import axios from '../../axios';
+import axios from '../../axios';
 import {Bar,Line} from 'react-chartjs-2';
-import axios from 'axios';
+// import axios from 'axios';
 
 class Detail extends Component {
 
@@ -23,73 +23,74 @@ class Detail extends Component {
         let iframe= "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_ae9d9&symbol="+this.props.match.params['ticker']+"&interval=30&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=F1F3F6&studies=%5B%5D&hideideas=1&theme=Dark&style=2&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.memebergterminal.com&utm_medium=widget&utm_campaign=chart&utm_term=" + this.props.match.params['ticker']
         // let iframe = "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_229e6&amp;symbol=" + this.props.match.params['ticker']+ "&amp;interval=30&amp;hidesidetoolbar=1&amp;symboledit=1&amp;saveimage=1&amp;toolbarbg=F1F3F6&amp;studies=%5B%5D&amp;hideideas=1&amp;theme=Dark&amp;style=2&amp;timezone=Etc%2FUTC&amp;studies_overrides=%7B%7D&amp;overrides=%7B%7D&amp;enabled_features=%5B%5D&amp;disabled_features=%5B%5D&amp;locale=en&amp;utm_source=www.memebergterminal.com&amp;utm_medium=widget&amp;utm_campaign=chart&amp;utm_term=" + this.props.match.params['ticker']
         this.setState({iframe: iframe})
-        const today_data = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=24h')
-        console.log("res = " ,today_data['data']['data'])
-        this.setState({detail: today_data['data']['data'] , loader:false})
-        this.getChartData()
-        // axios.get('api/data/getData', {
-        //     params: {
-        //         companyName:this.props.match.params['name'],
-        //     }
-        // })
-        // .then(res => {
-        //    var today_data = res['data']['today_data']
-        //    this.setState({detail: today_data , loader:false})
-        //    this.getChartData()
-        // })
-        // .catch(err => {
-        //     console.log("error = " , err)
-        // })  
+        // const today_data = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=24h')
+        // console.log("res = " ,today_data['data']['data'])
+        // this.setState({detail: today_data['data']['data'] , loader:false})
+        // this.getChartData()
+        axios.get('api/data/getData', {
+            params: {
+                companyName:this.props.match.params['name'],
+                data: false
+            }
+        })
+        .then(res => {
+           var today_data = res['data']['today_data']
+           this.setState({detail: today_data , loader:false})
+           this.getChartData()
+        })
+        .catch(err => {
+            console.log("error = " , err)
+        })  
 
     }
 
     async getChartData(){
         
-        var counter = 1
-        var mentions = []
-        var date_array = []
-        const today_data = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=24h')
-        console.log("res = " ,today_data['data']['data'])
-        mentions.push(today_data['data']['data'].length)
-        var current_Date = new Date();
-        date_array.push(current_Date.toString().substring(4,15))
+        // var counter = 1
+        // var mentions = []
+        // var date_array = []
+        // const today_data = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=24h')
+        // console.log("res = " ,today_data['data']['data'])
+        // mentions.push(today_data['data']['data'].length)
+        // var current_Date = new Date();
+        // date_array.push(current_Date.toString().substring(4,15))
 
-        const data1 = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=48h&before=24h')
-        mentions.push(data1['data']['data'].length)
+        // const data1 = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=48h&before=24h')
+        // mentions.push(data1['data']['data'].length)
 
-        console.log("1")
+        // console.log("1")
 
-        var previous_Date1 = new Date();
-        previous_Date1.setDate(previous_Date1.getDate() - 1);
-        date_array.push(previous_Date1.toString().substring(4,15))
+        // var previous_Date1 = new Date();
+        // previous_Date1.setDate(previous_Date1.getDate() - 1);
+        // date_array.push(previous_Date1.toString().substring(4,15))
 
-        const data2 = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=72h&before=48h')
-        mentions.push(data2['data']['data'].length)
+        // const data2 = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=72h&before=48h')
+        // mentions.push(data2['data']['data'].length)
 
-        console.log("2")
+        // console.log("2")
 
-        var previous_Date2 = new Date();
-        previous_Date2.setDate(previous_Date2.getDate() - 2);
-        date_array.push(previous_Date2.toString().substring(4,15))
+        // var previous_Date2 = new Date();
+        // previous_Date2.setDate(previous_Date2.getDate() - 2);
+        // date_array.push(previous_Date2.toString().substring(4,15))
 
 
-        const data3 = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=96h&before=72h')
-        mentions.push(data3['data']['data'].length)
+        // const data3 = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=96h&before=72h')
+        // mentions.push(data3['data']['data'].length)
 
-        console.log("3")
+        // console.log("3")
 
-        var previous_Date3 = new Date();
-        previous_Date3.setDate(previous_Date3.getDate() - 3);
-        date_array.push(previous_Date3.toString().substring(4,15))
+        // var previous_Date3 = new Date();
+        // previous_Date3.setDate(previous_Date3.getDate() - 3);
+        // date_array.push(previous_Date3.toString().substring(4,15))
 
-        const data4 = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=120h&before=96h')
-        mentions.push(data4['data']['data'].length)
+        // const data4 = await axios.get('/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=120h&before=96h')
+        // mentions.push(data4['data']['data'].length)
 
-        console.log("4")
+        // console.log("4")
 
-        var previous_Date4 = new Date();
-        previous_Date3.setDate(previous_Date3.getDate() - 4);
-        date_array.push(previous_Date4.toString().substring(4,15))
+        // var previous_Date4 = new Date();
+        // previous_Date3.setDate(previous_Date3.getDate() - 4);
+        // date_array.push(previous_Date4.toString().substring(4,15))
 
         // var after = 48
         // var before = 24
@@ -107,21 +108,21 @@ class Detail extends Component {
         //     before = before + 24
         //     counter = counter + 1 
         // }
-        this.setState({
-                chartData:{
-                  labels:date_array,
-                  datasets:[
-                    {
-                      label:'Mentions over time',
-                      data:mentions,
-                      backgroundColor:[
-                        'rgba(0,123,255,1)',
-                      ]
-                    }
-                  ]
-                },
-                showChart: true
-        });
+        // this.setState({
+        //         chartData:{
+        //           labels:date_array,
+        //           datasets:[
+        //             {
+        //               label:'Mentions over time',
+        //               data:mentions,
+        //               backgroundColor:[
+        //                 'rgba(0,123,255,1)',
+        //               ]
+        //             }
+        //           ]
+        //         },
+        //         showChart: true
+        // });
             
         // Ajax calls here
         // const config = {
@@ -165,31 +166,38 @@ class Detail extends Component {
         //         },
         //         showChart: true
         //       });
-        // axios.get('api/data/getPrevData', {
-        //     params: {
-        //         companyName:this.props.match.params['name'],
-        //     }
-        // })
-        // .then(res => {
-        //    this.setState({
-        //     chartData:{
-        //       labels:res['data']['dates'],
-        //       datasets:[
-        //         {
-        //           label:'Mentions over time',
-        //           data:res['data']['mentions'],
-        //           backgroundColor:[
-        //             'rgba(0,123,255,1)',
-        //           ]
-        //         }
-        //       ]
-        //     },
-        //     showChart: true
-        //   });
-        // })
-        // .catch(err => {
-        //     console.log("error = " , err)
-        // })  
+        axios.get('api/data/getPrevData', {
+            params: {
+                companyName:this.props.match.params['name'],
+            }
+        })
+        .then(res => {
+           console.log(res)
+           if (res.status == 200){
+               console.log("200")
+           }
+           if (res.status == 500){
+                console.log("500")
+           }
+           this.setState({
+            chartData:{
+              labels:res['data']['dates'],
+              datasets:[
+                {
+                  label:'Mentions over time',
+                  data:res['data']['mentions'],
+                  backgroundColor:[
+                    'rgba(0,123,255,1)',
+                  ]
+                }
+              ]
+            },
+            showChart: true
+          });
+        })
+        .catch(err => {
+            console.log("error = " , err)
+        })  
         
       }
     openUrl = (link) => {

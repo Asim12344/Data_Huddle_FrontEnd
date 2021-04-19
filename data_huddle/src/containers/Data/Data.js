@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import './Data.css';
 import Loader from "react-loader-spinner";
 import { stockData } from "../../stocks"
-// import axios from '../../axios';
+import axios from '../../axios';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/index';
 import Alert from '../../components/Alert'
-import axios from 'axios';
 class Data extends Component {
 
     state = {
@@ -100,6 +99,7 @@ class Data extends Component {
     }
 
     apicall = () => {
+        console.log("apicall")
         var check = false
         for(let i = 0 ; i < stockData.length ; i++){
             if(stockData[i].company.toLowerCase().trim() == this.state.companyName.toLowerCase().trim()){
@@ -108,13 +108,21 @@ class Data extends Component {
             }
         }
         if (check == true){
+            console.log("true")
             this.setState({loader: true})
             axios.get('api/data/getData', {
                 params: {
                     companyName:this.state.companyName,
+                    data: true
                 }
             })
             .then(res => {
+                if (res.status == 200){
+                    console.log("200")
+                }
+                if (res.status == 500){
+                     console.log("500")
+                }
                var today_data = res['data']['today_data']
                var yesterday_data = res['data']['yesterday_data']
                console.log(res['data'])
@@ -145,7 +153,7 @@ class Data extends Component {
                     <input type="text"  className="form-control height-45" value={this.state.companyName} onChange={this.handlekey} placeholder="Enter a company name" />
                 </div>
                 <div className="col-md-1">
-                    <button disabled={this.state.companyName == "" ? true : false} onClick={this.dummy} className="btn btn-primary height-45">Submit</button>                        
+                    <button disabled={this.state.companyName == "" ? true : false} onClick={this.apicall} className="btn btn-primary height-45">Submit</button>                        
                 </div>
                 {this.state.loader && (
                     <div className="col-md-3">
