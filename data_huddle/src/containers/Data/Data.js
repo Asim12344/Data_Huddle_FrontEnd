@@ -75,6 +75,12 @@ class Data extends Component {
         }
         if (check == true){
             this.setState({loader: true})
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin':'*'
+                }
+            };
             const response = await fetch('https://api.pushshift.io/reddit/comment/search/?q='+this.state.companyName +'&after=24h')
             const today_data = await response.json();
             console.log("res = " ,today_data['data'])

@@ -43,48 +43,89 @@ class Detail extends Component {
     }
 
     async getChartData(){
-        // Ajax calls here
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin':'*'
-            }
-        };
-    
-        const response2 = await fetch('https://memeberg-terminal.uc.r.appspot.com/graph?ticker='+this.props.match.params['ticker'],config)
-        const graph_data = await response2.json();
-        console.log("graph_data = " ,graph_data)
-        let y_axis = []
-        let x_axis = []
-        for(let i = 0 ; i < graph_data.length ; i++){
-            y_axis.push(graph_data[i]['y'])
-            x_axis.push(new Date(graph_data[i]['x']))
-            if (i == graph_data.length-1){
-                var date = (new Date(graph_data[i]['x']).toString())
-                console.log("date ===== " ,date)
-                this.setState({date: date})
-            }
+        
+        var counter = 1
+        var mentions = []
+        var date_array = []
+        var response = await fetch('https://api.pushshift.io/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=24h')
+        var today_data = await response.json();
+        console.log("res = " ,today_data['data'])        
+        var current_Date = new Date();
+        mentions.push(today_data['data'].length)
+        date_array.push(current_Date.toString().substring(4,15))
+        var after = 48
+        var before = 24
+        while (counter < 5){
+            console.log(counter)
+            var data = await fetch('https://api.pushshift.io/reddit/comment/search/?q='+this.props.match.params['name'] +'&after=' + after.toString() + 'h&before=' + before.toString() + 'h')
+            data = await data.json();
+            var previous_Date = new Date();
+            previous_Date.setDate(previous_Date.getDate() - counter);
+            console.log(previous_Date.toString());
+            mentions.push(data['data'].length)
+            date_array.push(previous_Date.toString().substring(4,15))
+            after = after + 24
+            before = before + 24
+            counter = counter + 1 
         }
-        console.log("x_axis = " ,x_axis)
-        console.log("y_axis = " ,y_axis)
         this.setState({
                 chartData:{
-                  labels:x_axis,
+                  labels:date_array,
                   datasets:[
                     {
-                      label: 'y',
-                      data:y_axis,
-                      borderColor: 'rgba(255,0,0)',
-                      pointBorderColor: 'rgba(0,0,0)',
-                    //   pointBackgroundColor: '#000',
+                      label:'Mentions over time',
+                      data:mentions,
                       backgroundColor:[
-                        'rgba(255,255,255)',
+                        'rgba(0,123,255,1)',
                       ]
                     }
                   ]
                 },
                 showChart: true
-              });
+        });
+            
+        // Ajax calls here
+        // const config = {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Access-Control-Allow-Origin':'*'
+        //     }
+        // };
+    
+        // const response2 = await fetch('https://memeberg-terminal.uc.r.appspot.com/graph?ticker='+this.props.match.params['ticker'],config)
+        // const graph_data = await response2.json();
+        // console.log("graph_data = " ,graph_data)
+        // let y_axis = []
+        // let x_axis = []
+        // for(let i = 0 ; i < graph_data.length ; i++){
+        //     y_axis.push(graph_data[i]['y'])
+        //     x_axis.push(new Date(graph_data[i]['x']))
+        //     if (i == graph_data.length-1){
+        //         var date = (new Date(graph_data[i]['x']).toString())
+        //         console.log("date ===== " ,date)
+        //         this.setState({date: date})
+        //     }
+        // }
+        // console.log("x_axis = " ,x_axis)
+        // console.log("y_axis = " ,y_axis)
+        // this.setState({
+        //         chartData:{
+        //           labels:x_axis,
+        //           datasets:[
+        //             {
+        //               label: 'y',
+        //               data:y_axis,
+        //               borderColor: 'rgba(255,0,0)',
+        //               pointBorderColor: 'rgba(0,0,0)',
+        //             //   pointBackgroundColor: '#000',
+        //               backgroundColor:[
+        //                 'rgba(255,255,255)',
+        //               ]
+        //             }
+        //           ]
+        //         },
+        //         showChart: true
+        //       });
         // axios.get('api/data/getPrevData', {
         //     params: {
         //         companyName:this.props.match.params['name'],
@@ -138,14 +179,14 @@ class Detail extends Component {
                                 options={{
                                     responsive: true,
                                     maintainAspectRatio: true,
-                                    legend: {
-                                        display: false
-                                    },
-                                    scales: {
-                                        xAxes: [{
-                                            display: false //this will remove all the x-axis grid lines
-                                        }]
-                                    }
+                                    // legend: {
+                                    //     display: false
+                                    // },
+                                    // scales: {
+                                    //     xAxes: [{
+                                    //         display: false //this will remove all the x-axis grid lines
+                                    //     }]
+                                    // }
                             
 
                                 }}
