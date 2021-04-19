@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import './Data.css';
 import Loader from "react-loader-spinner";
 import { stockData } from "../../stocks"
-import axios from '../../axios';
+// import axios from '../../axios';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/index';
 import Alert from '../../components/Alert'
-// import axios from 'axios';
+import axios from 'axios';
 class Data extends Component {
 
     state = {
@@ -81,14 +81,14 @@ class Data extends Component {
                     'Access-Control-Allow-Origin':'*'
                 }
             };
-            const response = await fetch('https://api.pushshift.io/reddit/comment/search/?q='+this.state.companyName +'&after=24h')
-            const today_data = await response.json();
-            console.log("res = " ,today_data['data'])
+            const today_data = await axios.get('/reddit/comment/search/?q='+this.state.companyName +'&after=24h')
+            // const today_data = await response.json();
+            console.log("res = " ,today_data['data']['data'])
 
-            const response1 = await fetch('https://api.pushshift.io/reddit/comment/search/?q='+this.state.companyName +'&after=48h&before=24h')
-            const yesterday_data = await response1.json();
-            console.log("res = " ,yesterday_data['data'])
-            this.data(today_data['data'],yesterday_data['data'])
+            const yesterday_data = await axios.get('/reddit/comment/search/?q='+this.state.companyName +'&after=48h&before=24h')
+            // const yesterday_data = await response1.json();
+            console.log("res = " ,yesterday_data['data']['data'])
+            this.data(today_data['data']['data'],yesterday_data['data']['data'])
             this.setState({loader: false , companyName: ""})
             
         }
