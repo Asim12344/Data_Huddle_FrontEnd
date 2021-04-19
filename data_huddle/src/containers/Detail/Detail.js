@@ -44,7 +44,14 @@ class Detail extends Component {
 
     async getChartData(){
         // Ajax calls here
-        const response2 = await fetch('https://memeberg-terminal.uc.r.appspot.com/graph?ticker='+this.props.match.params['ticker'])
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin':'*'
+            }
+        };
+    
+        const response2 = await fetch('https://memeberg-terminal.uc.r.appspot.com/graph?ticker='+this.props.match.params['ticker'],config)
         const graph_data = await response2.json();
         console.log("graph_data = " ,graph_data)
         let y_axis = []
