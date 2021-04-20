@@ -28,7 +28,7 @@ class Data extends Component {
     };
 
 
-    data = (today_data,yesterday_data) => {
+    data = (today_data,yesterday_data,stock_name) => {
         var change_in_mentions = today_data.length - yesterday_data.length
         
         if(change_in_mentions == 0){
@@ -47,7 +47,7 @@ class Data extends Component {
         
         var obj = {
             ticker: this.state.tickerName,
-            company: this.state.companyName,
+            company: stock_name,
             mentions: today_data.length,
             change_in_mentions: change_in_mentions,
         }
@@ -101,10 +101,12 @@ class Data extends Component {
     apicall = () => {
         console.log("apicall")
         var check = false
+        var stock_name = ""
         for(let i = 0 ; i < stockData.length ; i++){
-            if(stockData[i].company.toLowerCase().trim() == this.state.companyName.toLowerCase().trim()){
+            if(stockData[i].company.toLowerCase().trim() == this.state.companyName.toLowerCase().trim() || stockData[i].ticker.toLowerCase().trim() == this.state.companyName.toLowerCase().trim()){
                 check = true
-                this.setState({ tickerName: stockData[i].ticker });
+                stock_name = stockData[i].company
+                this.setState({ tickerName: stockData[i].ticker});
             }
         }
         if (check == true){
@@ -112,7 +114,7 @@ class Data extends Component {
             this.setState({loader: true})
             axios.get('api/data/getData', {
                 params: {
-                    companyName:this.state.companyName,
+                    companyName:stock_name,
                     data: true
                 }
             })
@@ -126,7 +128,8 @@ class Data extends Component {
                var today_data = res['data']['today_data']
                var yesterday_data = res['data']['yesterday_data']
                console.log(res['data'])
-               this.data(today_data,yesterday_data)
+            //    this.setState({ companyName: ""})
+               this.data(today_data,yesterday_data,stock_name)
                this.setState({loader: false , companyName: ""})
             })
             .catch(err => {
