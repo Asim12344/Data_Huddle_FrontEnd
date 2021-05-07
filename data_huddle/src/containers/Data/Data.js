@@ -102,11 +102,14 @@ class Data extends Component {
         console.log("apicall")
         var check = false
         var stock_name = ""
+        var combined_name = ""
         for(let i = 0 ; i < stockData.length ; i++){
-            if(stockData[i].company.toLowerCase().trim() == this.state.companyName.toLowerCase().trim() || stockData[i].ticker.toLowerCase().trim() == this.state.companyName.toLowerCase().trim()){
+            if(stockData[i].company.toLowerCase().trim().split(" ")[0] == this.state.companyName.toLowerCase().trim().split(" ")[0] || stockData[i].ticker.toLowerCase().trim() == this.state.companyName.toLowerCase().trim()){
                 check = true
                 stock_name = stockData[i].company
+                combined_name = stockData[i].company + "|" + stockData[i].ticker
                 this.setState({ tickerName: stockData[i].ticker});
+                break
             }
         }
         if (check == true){
@@ -114,7 +117,7 @@ class Data extends Component {
             this.setState({loader: true})
             axios.get('api/data/getData', {
                 params: {
-                    companyName:stock_name,
+                    companyName:combined_name,
                     data: true
                 }
             })

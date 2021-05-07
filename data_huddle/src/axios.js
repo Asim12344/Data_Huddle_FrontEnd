@@ -4,5 +4,9 @@ const instance = axios.create({
     baseURL: 'https://data-huddle-be.herokuapp.com/'
 });
 
+// const instance = axios.create({
+//     baseURL: 'http://127.0.0.1:8000/'
+// });
+
 
 export default instance;
