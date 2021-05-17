@@ -4,7 +4,8 @@ import Loader from "react-loader-spinner";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import axios from '../../axios';
 import {Bar,Line} from 'react-chartjs-2';
-// import axios from 'axios';
+import {getDataFromAPI} from '../../store/actions/detail'
+
 
 class Detail extends Component {
 
@@ -37,88 +38,49 @@ class Detail extends Component {
         //     console.log("error = " , err)
         // })  
         var combined_name = this.props.match.params['name'] + "|" + this.props.match.params['ticker']
-        var today_data_array = []
-        var today_data = await axios.get('https://api.pushshift.io/reddit/comment/search/?q='+combined_name +'&after=24h&size=1000')
-
-        console.log(today_data)
-        console.log(today_data['status'])
-        while (today_data['status'] != 200){
-            console.log("while today")
-            today_data = await axios.get('https://api.pushshift.io/reddit/comment/search/?q='+combined_name +'&after=24h&size=1000')
-            console.log(today_data['status'])
-        }
-
-        console.log("res = " ,today_data['data']['data'])
-        // today_data_array = today_data_array.push(...today_data['data']['data'])
-        for (let i = 0 ; i < today_data['data']['data'].length ; i++){
-            today_data_array.push(today_data['data']['data'][i])
-        }
-        console.log("today_data_array = " , today_data_array)
-        var current_Date = new Date()
-
-        while (today_data['data']['data'].length == 100){
-            var get_time = new Date((today_data['data']['data'][today_data['data']['data'].length-1]['created_utc'])*1000) 
-            console.log(current_Date)
-            console.log(get_time)
-            var miliseconds = current_Date - get_time
-            console.log("miliseconds = " , miliseconds)
-            var hour = Math.floor((miliseconds / (1000 * 60 * 60)) % 24);
-            console.log("hour = " , hour)
-            today_data = await axios.get('https://api.pushshift.io/reddit/comment/search/?q='+combined_name +'&after='+ hour + 'h&size=1000')
-            console.log(today_data['status'])
-            while (today_data['status'] != 200){
-                console.log("while today")
-                today_data = await axios.get('https://api.pushshift.io/reddit/comment/search/?q='+combined_name +'&after='+ hour + 'h&size=1000')
-                console.log(today_data['status'])
-            }
-            console.log("Total Records = " , today_data['data']['data'].length)
-            for (let i = 0 ; i < today_data['data']['data'].length ; i++){
-                today_data_array.push(today_data['data']['data'][i])
-            }
-        }
-
-        console.log("today_data_array = " , today_data_array)
+        const today_data_array = await getDataFromAPI(combined_name , false)
+        console.log(today_data_array)
         this.setState({detail: today_data_array , loader:false})
 
     }
 
-    async getChartData(){
+    // async getChartData(){
         
         
-        axios.get('api/data/getPrevData', {
-            params: {
-                companyName:this.props.match.params['name'] + "|" + this.props.match.params['ticker'],
-            }
-        })
-        .then(res => {
-           console.log(res)
-           if (res.status == 200){
-               console.log("200")
-           }
-           if (res.status == 500){
-                console.log("500")
-           }
-           this.setState({
-            chartData:{
-              labels:res['data']['dates'],
-              datasets:[
-                {
-                  label:'Mentions over time',
-                  data:res['data']['mentions'],
-                  backgroundColor:[
-                    'rgba(0,123,255,1)',
-                  ]
-                }
-              ]
-            },
-            showChart: true
-          });
-        })
-        .catch(err => {
-            console.log("error = " , err)
-        })  
+    //     axios.get('api/data/getPrevData', {
+    //         params: {
+    //             companyName:this.props.match.params['name'] + "|" + this.props.match.params['ticker'],
+    //         }
+    //     })
+    //     .then(res => {
+    //        console.log(res)
+    //        if (res.status == 200){
+    //            console.log("200")
+    //        }
+    //        if (res.status == 500){
+    //             console.log("500")
+    //        }
+    //        this.setState({
+    //         chartData:{
+    //           labels:res['data']['dates'],
+    //           datasets:[
+    //             {
+    //               label:'Mentions over time',
+    //               data:res['data']['mentions'],
+    //               backgroundColor:[
+    //                 'rgba(0,123,255,1)',
+    //               ]
+    //             }
+    //           ]
+    //         },
+    //         showChart: true
+    //       });
+    //     })
+    //     .catch(err => {
+    //         console.log("error = " , err)
+    //     })  
         
-      }
+    //   }
     openUrl = (link) => {
         window.open(link);
     }
