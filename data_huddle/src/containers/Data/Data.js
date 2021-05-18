@@ -81,10 +81,23 @@ class Data extends Component {
         if (check == true){
             console.log(combined_name)
             this.setState({loader: true})
-            const [today_data_array,yesterday_data_array] = await getDataFromAPI(combined_name , true)
+            // const [today_data_array,yesterday_data_array] = await getDataFromAPI(combined_name , true)
+
+            const today_yesterday_data = await getDataFromAPI(combined_name , true)
+            console.log(today_yesterday_data)
            
-            this.data(today_data_array,yesterday_data_array,stock_name)
-            this.setState({loader: false , companyName: ""})
+            // this.data(today_data_array,yesterday_data_array,stock_name)
+            // this.setState({loader: false , companyName: ""})
+            if(today_yesterday_data.length == 2){
+                this.data(today_yesterday_data[0],today_yesterday_data[1],stock_name)
+                this.setState({loader: false , companyName: ""})
+            }
+            else{
+                this.props.showAlert("Internet problem plz try again","danger")
+                this.props.hideAlert()
+                this.setState({loader: false , companyName: ""})
+            }
+            
             
         }
         else{
@@ -158,11 +171,11 @@ class Data extends Component {
                 <div className="col-md-1">
                     <button disabled={this.state.companyName == "" ? true : false} onClick={this.getData} className="btn btn-primary height-45">Submit</button>                        
                 </div>
-                {this.state.loader && (
+                {/* {this.state.loader && (
                     <div className="col-md-3">
                         <Loader type="Puff" color="#00BFFF" height={40} width={50}/>                        
                     </div>
-                )}               
+                )}                */}
             </div>
             <table className="table table-bordered margin-top-23">
                 <thead className="background-color">
@@ -195,6 +208,11 @@ class Data extends Component {
                     })}
                 </tbody>
             </table>
+                {this.state.loader && (
+                    <div className="center" >
+                            <Loader type="Puff" color="#00BFFF" height={100} width={100}/>
+                    </div>                
+                )}      
             </div>
         )
     }

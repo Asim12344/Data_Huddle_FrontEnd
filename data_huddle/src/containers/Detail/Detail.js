@@ -4,8 +4,10 @@ import Loader from "react-loader-spinner";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import axios from '../../axios';
 import {Bar,Line} from 'react-chartjs-2';
-import {getDataFromAPI} from '../../store/actions/detail'
-
+import {getDataFromAPI,getFiveDayDataFromAPI} from '../../store/actions/detail'
+import { connect } from 'react-redux';
+import Alert from '../../components/Alert'
+import * as actionCreators from '../../store/actions/index'
 
 class Detail extends Component {
 
@@ -40,8 +42,55 @@ class Detail extends Component {
         var combined_name = this.props.match.params['name'] + "|" + this.props.match.params['ticker']
         const today_data_array = await getDataFromAPI(combined_name , false)
         console.log(today_data_array)
-        this.setState({detail: today_data_array , loader:false})
+        if (today_data_array[0] == 'error'){
+            this.props.showAlert("Internet problem plz try again","danger")
+            this.props.hideAlert()
+            this.setState({loader:false})
+        }
+        else{
+            this.setState({detail: today_data_array , loader:false})
+            this.getChartData(combined_name,today_data_array.length)
+        }
+        
+    }
 
+    async getChartData(combined_name,today_data_length){
+        var dates = []
+        for (let i = 0 ; i < 5 ; i++){
+            var date = new Date();
+            date.setDate(date.getDate() - i)
+            console.log("date1 = " , date)
+            var date = date.toString().substring(0,15)
+            console.log("date2 = " ,date)
+            dates.push(date)
+        }
+        console.log(dates)
+        const five_day_data_array = await getFiveDayDataFromAPI(combined_name,today_data_length)
+        
+        console.log(five_day_data_array)
+        if(five_day_data_array.length == 5){
+            this.setState({
+                chartData:{
+                    labels:dates,
+                    datasets:[
+                    {
+                        label:'Mentions over time',
+                        data:five_day_data_array,
+                        backgroundColor:[
+                        'rgba(0,123,255,1)',
+                        ]
+                    }
+                    ]
+                },
+                showChart: true
+                });
+        }
+        else{
+            this.props.showAlert("Internet problem plz try again","danger")
+            this.props.hideAlert()
+            this.setState({showChart: true})
+        }
+        
     }
 
     // async getChartData(){
@@ -89,6 +138,11 @@ class Detail extends Component {
     render(){
         return(
             <div className="container m-t-50">
+                {this.props.alert == true && (
+                    <div>
+                        <Alert variant={this.props.alertType} message={this.props.alertMessage}/>
+                    </div>
+                )}
                 <div className="row">
                     <div className="col-md-4">
                         <div className="">
@@ -96,7 +150,7 @@ class Detail extends Component {
                         </div>
                         <iframe id="tradingview_229e6" src={this.state.iframe}  style={{width: "100%" ,height: "100%", margin: 0 , padding: 0 }} allowtransparency="true" scrolling="no" allowFullScreen=""></iframe>
                     </div>
-                    {/* <div className="col-md-8">
+                    <div className="col-md-8">
                         {this.state.showChart && (
                         <div className="" >
                             <div className="">
@@ -121,7 +175,7 @@ class Detail extends Component {
                                 <Loader type="Puff" color="#00BFFF" height={100} width={100}/>
                             </div>
                         )}
-                    </div> */}
+                    </div>
                     
                 </div>
                 <div className="center" style={{marginTop: '66px'}}>
@@ -178,6 +232,19 @@ class Detail extends Component {
         )
     }
 }
+const mapStateToProps = state => {
+    return {
+        alert: state.alert.alert,
+        alertMessage: state.alert.alertMessage,
+        alertType: state.alert.alertType,
+    }
+};
 
+const mapDispatchToProps = dispatch =>  {
+    return {
+        showAlert: (message,variant) => dispatch(actionCreators.showAlert(message,variant)),
+        hideAlert: () => dispatch(actionCreators.hideAlert())
+    }
+};
 
-export default (Detail)
+export default connect(mapStateToProps, mapDispatchToProps)(Detail)
