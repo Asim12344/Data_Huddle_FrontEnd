@@ -189,6 +189,7 @@ class Detail extends Component {
         for(let i = 0 ; i < data['data']['data'].length ; i++){
             var one_day_data = data['data']['data'][i]
             count = 0
+            console.log(i)
             console.log("======================================")
             for (let j = 0 ; j < one_day_data.length ; j++){
                 var parse_data = JSON.parse(one_day_data[j]['data'])
@@ -200,10 +201,9 @@ class Detail extends Component {
 
                 if(i==0){
                     for(let k = 0 ; k < value_array.length; k++){
-                        one_day_data_array.push(value_array[k])
+                        one_day_data_array.unshift(value_array[k])
                     }
                 }
-                console.log("one_day_data = " , one_day_data_array)
             }
             five_day_data_array.push(count)
         }
