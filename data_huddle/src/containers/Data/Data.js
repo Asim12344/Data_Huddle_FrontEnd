@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import './Data.css';
 import Loader from "react-loader-spinner";
 import { stockData } from "../../stocks"
+import { stockDataCron } from "../../cron"
 import axios from '../../axios';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/index';
 import Alert from '../../components/Alert'
-import {getDataFromAPI} from '../../store/actions/detail'
+import moment from 'moment';
+
 class Data extends Component {
 
     state = {
@@ -20,8 +22,8 @@ class Data extends Component {
     componentDidMount(){
     }
 
-    detail = (company,ticker) => {
-        this.props.history.push(`/detail/${company}/${ticker}`);
+    detail = (company,ticker,cron) => {
+        this.props.history.push(`/detail/${company}/${ticker}/${cron}`);
     }
 
     handlekey = event => {
@@ -29,15 +31,15 @@ class Data extends Component {
     };
 
 
-    data = (today_data,yesterday_data,stock_name) => {
-        var change_in_mentions = today_data.length - yesterday_data.length
-        
+    data = (today_data,yesterday_data,stock_name,cron) => {
+        var change_in_mentions = today_data - yesterday_data
+        console.log("change_in_mentions = ", change_in_mentions)
         if(change_in_mentions == 0){
             change_in_mentions = change_in_mentions + "%"
         }
         else{
-            if (yesterday_data.length > 0){
-                change_in_mentions = change_in_mentions / yesterday_data.length
+            if (yesterday_data > 0){
+                change_in_mentions = change_in_mentions / yesterday_data
                 change_in_mentions = change_in_mentions * 100
                 change_in_mentions = change_in_mentions.toFixed(2) + "%"
             }
@@ -49,8 +51,9 @@ class Data extends Component {
         var obj = {
             ticker: this.state.tickerName,
             company: stock_name,
-            mentions: today_data.length,
+            mentions: today_data,
             change_in_mentions: change_in_mentions,
+            cron:cron
         }
         var stockRecords = this.props.stockRecords
         var check_record = false
@@ -65,7 +68,47 @@ class Data extends Component {
         
     }
 
-    getData = async () => {
+    getDataFromRedditAPI = async (company,utc_time) => {
+        console.log("getDataFromRedditAPI")
+        company = company.split("|");
+        var data_array = {};
+        for (let k = 0; k < company.length; k++) {
+            let after = null;
+            while (true) {
+            var res = await axios.get(
+                "https://www.reddit.com/search.json?q=" +
+                company[k] +
+                "&sort=new" +
+                (after ? `&after=${after}` : "") +
+                "&limit=100"
+            );
+            let break_flag = false;
+            let data = res.data.data.children;
+            console.log("length", data.length);
+            after = res.data.data.after;
+
+            for (let i = 0; i < data.length; i++) {
+                data_array[data[i].data.created_utc] = {
+                url: data[i].data.url,
+                body: data[i].data.body,
+                subreddit: data[i].data.subreddit_name_prefixed,
+                created_utc: data[i].data.created_utc,
+                };
+                if (data[i].data.created_utc < utc_time) {
+                    console.log("breaking loop");
+                    break_flag = true;
+                    break;
+                }
+            }
+            if (break_flag || after == null) break;
+            }
+        }
+        console.log(Object.keys(data_array).length);
+        var json = (data_array);
+        return json;
+    }
+
+    getDataFromStock = async () => {
         var check = false
         var stock_name = ""
         var combined_name = ""
@@ -73,32 +116,39 @@ class Data extends Component {
             if(stockData[i].company.toLowerCase().trim().split(" ")[0] == this.state.companyName.toLowerCase().trim().split(" ")[0] || stockData[i].ticker.toLowerCase().trim() == this.state.companyName.toLowerCase().trim()){
                 check = true
                 stock_name = stockData[i].company
-                combined_name = stockData[i].company + "|" + stockData[i].ticker
+                combined_name = stockData[i].ticker + "|" + stockData[i].company
                 this.setState({ tickerName: stockData[i].ticker});
                 break
             }
         }
         if (check == true){
-            console.log(combined_name)
+            console.log("combined_name = " , combined_name)
             this.setState({loader: true})
-            // const [today_data_array,yesterday_data_array] = await getDataFromAPI(combined_name , true)
-
-            const today_yesterday_data = await getDataFromAPI(combined_name , true)
-            console.log(today_yesterday_data)
-           
-            // this.data(today_data_array,yesterday_data_array,stock_name)
-            // this.setState({loader: false , companyName: ""})
-            if(today_yesterday_data.length == 2){
-                this.data(today_yesterday_data[0],today_yesterday_data[1],stock_name)
-                this.setState({loader: false , companyName: ""})
-            }
-            else{
-                this.props.showAlert("Internet problem plz try again","danger")
-                this.props.hideAlert()
-                this.setState({loader: false , companyName: ""})
-            }
+            var time1 = moment();
+            var time2 = moment();
+            var utc_time_yesterday = time1.subtract(48, "hours").unix();
+            var utc_time_today = time2.subtract(24, "hours").unix();
+            let json = await this.getDataFromRedditAPI(combined_name,utc_time_yesterday)
+            console.log(json)
+            var value_array = Object.values(json)
             
-            
+            var today_data = 0
+            var yesterday_data = 0
+            console.log("utc_time_today = " , utc_time_today)
+            console.log("utc_time_yesterday = " , utc_time_yesterday)
+            console.log(value_array)
+            for(let i = 0 ; i < value_array.length ; i++){
+                if (value_array[i]['created_utc'] > utc_time_today){
+                    today_data =  today_data + 1
+                }
+                if (value_array[i]['created_utc'] > utc_time_yesterday && value_array[i]['created_utc'] < utc_time_today){
+                    yesterday_data =  yesterday_data + 1
+                }
+            }
+            console.log("today_data = " , today_data)
+            console.log("yesterday_data = " , yesterday_data)
+            this.data(today_data,yesterday_data,stock_name,false)
+            this.setState({loader: false , companyName: ""})
         }
         else{
             this.props.showAlert("Does not exist in list","danger")
@@ -106,55 +156,58 @@ class Data extends Component {
             this.setState({loader: false , companyName: ""})
         }
 
+    }
+    
+
+    apicall = async () => {
+        var check = false
+        var stock_name = ""
+        var combined_name = ""
+        for(let i = 0 ; i < stockDataCron.length ; i++){
+            if(stockDataCron[i].company.toLowerCase().trim().split(" ")[0] == this.state.companyName.toLowerCase().trim().split(" ")[0] || stockDataCron[i].ticker.toLowerCase().trim() == this.state.companyName.toLowerCase().trim()){
+                check = true
+                stock_name = stockDataCron[i].company
+                combined_name = stockDataCron[i].ticker + "|" + stockDataCron[i].company
+                this.setState({ tickerName: stockDataCron[i].ticker});
+                break
+            }
+        }
+        if (check == true){
+            console.log(combined_name)
+            this.setState({loader: true})
+            var data = await axios.get('http://datahuddle.co:8080/get?company='+combined_name+'&days=2')
+            .catch(err => {
+                console.log("error = " , err)
+            })
+            console.log(data['data']['data'])          
+            var today_data = data['data']['data'][0]
+            var today_count = 0
+            for(let i = 0 ; i < today_data.length ; i++){
+                var parse_data = JSON.parse(today_data[i]['data'])
+                console.log(parse_data)
+                console.log(Object.keys(parse_data).length)
+                today_count = today_count + Object.keys(parse_data).length
+
+            }
+            console.log("today_count = " , today_count)
+            var yesterday_data = data['data']['data'][1]
+            var yesterday_count = 0
+            for(let i = 0 ; i < yesterday_data.length ; i++){
+                var parse_data_yesterday = JSON.parse(yesterday_data[i]['data'])
+                console.log(parse_data_yesterday)
+                console.log(Object.keys(parse_data_yesterday).length)
+                yesterday_count = yesterday_count + Object.keys(parse_data_yesterday).length
+            }
+            console.log("yesterday_count = " , yesterday_count)
+            this.data(today_count,yesterday_count,stock_name,true)
+            this.setState({loader: false , companyName: ""})
+        }
+        else{
+            this.getDataFromStock()
+        }
 
     }
 
-    // apicall = () => {
-    //     console.log("apicall")
-    //     var check = false
-    //     var stock_name = ""
-    //     var combined_name = ""
-    //     for(let i = 0 ; i < stockData.length ; i++){
-    //         if(stockData[i].company.toLowerCase().trim().split(" ")[0] == this.state.companyName.toLowerCase().trim().split(" ")[0] || stockData[i].ticker.toLowerCase().trim() == this.state.companyName.toLowerCase().trim()){
-    //             check = true
-    //             stock_name = stockData[i].company
-    //             combined_name = stockData[i].company + "|" + stockData[i].ticker
-    //             this.setState({ tickerName: stockData[i].ticker});
-    //             break
-    //         }
-    //     }
-    //     if (check == true){
-    //         console.log("true")
-    //         this.setState({loader: true})
-    //         axios.get('api/data/getData', {
-    //             params: {
-    //                 companyName:combined_name,
-    //                 data: true
-    //             }
-    //         })
-    //         .then(res => {
-    //             if (res.status == 200){
-    //                 console.log("200")
-    //             }
-    //             if (res.status == 500){
-    //                  console.log("500")
-    //             }
-    //            var today_data = res['data']['today_data']
-    //            var yesterday_data = res['data']['yesterday_data']
-    //            console.log(res['data'])
-    //            this.data(today_data,yesterday_data,stock_name)
-    //            this.setState({loader: false , companyName: ""})
-    //         })
-    //         .catch(err => {
-    //             console.log("error = " , err)
-    //         })  
-    //     }
-    //     else{
-    //         this.props.showAlert("Does not exist in list","danger")
-    //         this.props.hideAlert()
-    //         this.setState({loader: false , companyName: ""})
-    //     }
-    // }
 
     render(){
         return(
@@ -169,13 +222,8 @@ class Data extends Component {
                     <input type="text"  className="form-control height-45" value={this.state.companyName} onChange={this.handlekey} placeholder="Enter a company name" />
                 </div>
                 <div className="col-md-1">
-                    <button disabled={this.state.companyName == "" ? true : false} onClick={this.getData} className="btn btn-primary height-45">Submit</button>                        
+                    <button disabled={this.state.companyName == "" ? true : false} onClick={this.apicall} className="btn btn-primary height-45">Submit</button>                        
                 </div>
-                {/* {this.state.loader && (
-                    <div className="col-md-3">
-                        <Loader type="Puff" color="#00BFFF" height={40} width={50}/>                        
-                    </div>
-                )}                */}
             </div>
             <table className="table table-bordered margin-top-23">
                 <thead className="background-color">
@@ -197,7 +245,7 @@ class Data extends Component {
                                 <td>{rec.change_in_mentions}</td>
                                 <td>
                                     {rec.mentions > 0 && (
-                                        <span className="curser_allowed" onClick={() => this.detail(rec.company,rec.ticker)}>Detail</span>
+                                        <span className="curser_allowed" onClick={() => this.detail(rec.company,rec.ticker,rec.cron)}>Detail</span>
                                     )}
                                     {rec.mentions == 0 && (
                                         <span>---------</span>

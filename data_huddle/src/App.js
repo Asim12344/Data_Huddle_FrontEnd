@@ -12,7 +12,7 @@ class App extends Component {
           <Switch>
             <Route exact path='/home' component={Home} /> 
             <Route exact path='/data' component={Data} />
-            <Route exact path='/detail/:name/:ticker' component={Detail} />
+            <Route exact path='/detail/:name/:ticker/:cron' component={Detail} />
             <Redirect from="/" to="/home" />
           </Switch>
         </Layout>

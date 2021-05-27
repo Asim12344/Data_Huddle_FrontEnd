@@ -13,7 +13,7 @@ export const getFiveDayDataFromAPI = async (combined_name,today_data_length) => 
     var data_array = []
     var five_day_data_array = []
     five_day_data_array.push(today_data_length)
-    for (let i = 2; i <=5 ; i++){
+    for (let i = 2; i <= 5 ; i++){
         var utc_time_1 = moment().subtract(i, 'days').unix() 
         var utc_time_2 = moment().subtract(i-1, 'days').unix() 
         error = false
