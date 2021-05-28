@@ -178,7 +178,7 @@ class Detail extends Component {
             dates.push(date)
         }
         console.log(dates)
-        var data = await axios.get('http://datahuddle.co:8080/get?company='+combined_name+'&days=5')
+        var data = await axios.get('https://datahuddle.co:8080/get?company='+combined_name+'&days=5')
         .catch(err => {
             console.log("error = " , err)
         })

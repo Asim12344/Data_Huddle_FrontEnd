@@ -175,7 +175,7 @@ class Data extends Component {
         if (check == true){
             console.log(combined_name)
             this.setState({loader: true})
-            var data = await axios.get('http://datahuddle.co:8080/get?company='+combined_name+'&days=2')
+            var data = await axios.get('https://datahuddle.co:8080/get?company='+combined_name+'&days=2')
             .catch(err => {
                 console.log("error = " , err)
             })
